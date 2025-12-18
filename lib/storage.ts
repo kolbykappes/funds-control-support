@@ -1,6 +1,7 @@
-import { DisbursementAuthorization, UserSettings } from './types';
+import { DisbursementAuthorization, BondRequest, UserSettings } from './types';
 
 const AUTHORIZATIONS_KEY = 'disbursement_authorizations';
+const BOND_REQUESTS_KEY = 'bond_requests';
 const SETTINGS_KEY = 'user_settings';
 
 // Authorizations
@@ -76,6 +77,60 @@ export const getUserSettings = (): UserSettings => {
 
 export const saveUserSettings = (settings: UserSettings): void => {
   localStorage.setItem(SETTINGS_KEY, JSON.stringify(settings));
+};
+
+// Bond Requests
+export const getAllBondRequests = (): BondRequest[] => {
+  if (typeof window === 'undefined') return [];
+  const data = localStorage.getItem(BOND_REQUESTS_KEY);
+  return data ? JSON.parse(data) : [];
+};
+
+export const getBondRequestById = (id: string): BondRequest | null => {
+  const requests = getAllBondRequests();
+  return requests.find(req => req.id === id) || null;
+};
+
+export const saveBondRequest = (request: BondRequest): void => {
+  const requests = getAllBondRequests();
+  const existingIndex = requests.findIndex(req => req.id === request.id);
+
+  if (existingIndex >= 0) {
+    requests[existingIndex] = {
+      ...request,
+      updatedAt: new Date().toISOString(),
+    };
+  } else {
+    requests.push({
+      ...request,
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+    });
+  }
+
+  localStorage.setItem(BOND_REQUESTS_KEY, JSON.stringify(requests));
+};
+
+export const deleteBondRequest = (id: string): void => {
+  const requests = getAllBondRequests();
+  const filtered = requests.filter(req => req.id !== id);
+  localStorage.setItem(BOND_REQUESTS_KEY, JSON.stringify(filtered));
+};
+
+export const cloneBondRequest = (id: string): BondRequest | null => {
+  const original = getBondRequestById(id);
+  if (!original) return null;
+
+  const clone: BondRequest = {
+    ...original,
+    id: generateId(),
+    title: `${original.title} (Copy)`,
+    createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString(),
+  };
+
+  saveBondRequest(clone);
+  return clone;
 };
 
 // Utility

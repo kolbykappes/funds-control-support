@@ -40,6 +40,50 @@ export interface DisbursementAuthorization {
   projectName: string;
 }
 
+export interface BondRequest {
+  id: string;
+  title: string;
+  createdAt: string;
+  updatedAt: string;
+
+  // Header
+  approved: boolean;
+  declined: boolean;
+  approvedBy: string;
+
+  // Basic Information
+  submitTo: string;
+  contractor: string;
+  contractorAddress: string;
+  obligeeOfJob: string;
+  obligeeAddress: string;
+  jobDescription: string;
+
+  // Bond Information
+  bondType: 'bid' | 'performance' | 'payment' | 'form' | '';
+  bidPercentage: string;
+  copies: string;
+  bidDate: string;
+  contractDate: string;
+  bondDate: string;
+  estimatedContractAmt: string;
+  contractBondAmt: string;
+  completionTime: string;
+  penalty: string;
+  maintenancePeriod: string;
+
+  // Architect
+  architectName: string;
+  architectAddress: string;
+
+  // Delivery
+  deliveryMethod: 'regular' | 'overnight' | 'pickup' | '';
+  upsFedExNumber: string;
+
+  // Comments
+  comments: string;
+}
+
 export interface UserSettings {
   signatureImage: string; // base64 encoded image
   defaultContractorName: string;
@@ -73,4 +117,33 @@ export const createEmptyAuthorization = (): Omit<DisbursementAuthorization, 'id'
   contractorName: '',
   date: new Date().toISOString().split('T')[0],
   projectName: '',
+});
+
+export const createEmptyBondRequest = (): Omit<BondRequest, 'id' | 'createdAt' | 'updatedAt'> => ({
+  title: '',
+  approved: false,
+  declined: false,
+  approvedBy: '',
+  submitTo: '',
+  contractor: '',
+  contractorAddress: '',
+  obligeeOfJob: '',
+  obligeeAddress: '',
+  jobDescription: '',
+  bondType: '',
+  bidPercentage: '',
+  copies: '',
+  bidDate: '',
+  contractDate: '',
+  bondDate: '',
+  estimatedContractAmt: '',
+  contractBondAmt: '',
+  completionTime: '',
+  penalty: '',
+  maintenancePeriod: '',
+  architectName: '',
+  architectAddress: '',
+  deliveryMethod: '',
+  upsFedExNumber: '',
+  comments: '',
 });
